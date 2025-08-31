@@ -25,3 +25,28 @@ This means my setup works: server is running, axios fetches data, cheerio parses
 ```bash
 npm install
 node server.js
+```
+
+
+## Step 2 – First Scraper
+In this step I created `scraper.js` to test scraping a simple site (`quotes.toscrape.com`).  
+I used **axios** to fetch the page and **cheerio** to read the HTML and extract all the quotes and authors.  
+
+When I run:
+- 'node scraper.js'
+I can see the scraped quotes printed in the terminal. This proves the setup works and I can start building the Naver scraper later.
+
+## Step 3 – Proxy Testing
+The challenge gave me a proxy string to use: 6n8xhsmh.as.thordata.net:9999:td-customer-mrscraperTrial-country-kr:P3nNRQ8C2
+I set up a small script (proxyTest.js) to check if the proxy works by sending my request through it to https://httpbin.org/ip.
+This way I can see if the IP changes, which means the proxy is working.
+
+When I run this test, I get SSL and connection errors (like wrong version number or 429 Too Many Requests).
+That means the code is correct, but the proxy provided in the challenge doesn’t actually let me through.
+
+To confirm, I also tested with some free proxies from the internet, and the script works as expected.
+So the takeaway is: my setup is fine, but the given proxy is either blocked or expired.
+
+For the next step i will try implementing a Retry logic and documenting the errors so even if the scrape doesn't succeed,
+the project will show how it should work.
+
