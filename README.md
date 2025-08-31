@@ -117,4 +117,59 @@ if this were on production, i would:
  - Rotate multiple proxies instead of just one, even though i tried using free proxies scraper still wont allow it i think there is some better tools (paid) like scrape.do or else that may support the proxies rotation
  - Add session cookies or even simulates browser behavior with puppeteer or playwright based on what i read could be effective on some cases.
 
- 
+ ## Step 6 – API Wrapper  
+
+Now I exposed my scraper as a small **Express.js API**.  
+This way, instead of running the script manually, anyone can hit an endpoint like:
+
+http://localhost:3000/scrape?url=https://smartstore.naver.com/rainbows9030/products/11102379008
+
+and the server will:  
+1. Rotate **User-Agent** headers.  
+2. Use **retry logic + random backoff**.  
+3. Try with the provided **proxy** (though it still fails, documented).  
+4. Return JSON with the scraped HTML length + a snippet for inspection.
+
+---
+
+### Example Output  
+
+```json
+{
+  "success": true,
+  "length": 231045,
+  "snippet": "<!doctype html><html lang=\"ko\"><head><meta charset=\"utf-8\">..."
+}
+```
+
+how to run 
+npm install
+node apiServer.js
+then open your browser and access the link provided above 
+
+ ## Step 7 - Build a API with Ngrok
+
+Finally, I built apiServer.js – an Express server that exposes an API for scraping.
+
+Features:
+
+Endpoint /scrape?url=...
+- Uses proxy, retry logic, and user-agent rotation under the hood.
+- Returns JSON with the scraped page snippet and length.
+- Hosted via Ngrok so it can be accessed from the internet.
+
+Example usage (after running node apiServer.js and starting ngrok): 
+curl "https://dd31b356a286.ngrok-free.app/scrape?url=https://quotes.toscrape.com"
+
+with the Response like 
+```json
+{
+  "success": true,
+  "length": 10584,
+  "snippet": "<!DOCTYPE html><html lang=\"en\">..."
+}
+```
+This completes the deliverables:
+- Hosted API (Ngrok)
+- Source code (GitHub repo)
+- README with setup + explanation
