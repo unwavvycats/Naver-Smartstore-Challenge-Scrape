@@ -50,3 +50,34 @@ So the takeaway is: my setup is fine, but the given proxy is either blocked or e
 For the next step i will try implementing a Retry logic and documenting the errors so even if the scrape doesn't succeed,
 the project will show how it should work.
 
+## Step 4 – Retry Logic + Random Delays  
+
+At this point I noticed that Naver blocks requests quickly with **429 Too Many Requests**.  
+To make my scraper more realistic and resilient, I added two strategies:  
+
+1. **Retry logic** – if a request fails, it will automatically retry up to 5 times.  
+2. **Randomized backoff** – between retries, the script waits for a random time between 3–10 seconds.  
+   This way it doesn’t hammer the site at predictable intervals.  
+
+Here’s a simplified version of the logic:  
+
+```js
+for (let i = 1; i <= retries; i++) {
+  try {
+    const res = await axios.get(url, { httpsAgent: agent });
+    return res.data;
+  } catch (err) {
+    if (i < retries) {
+      const delay = Math.random() * (10000 - 3000) + 3000;
+      await new Promise(r => setTimeout(r, delay));
+    }
+  }
+}
+```
+
+When I test it on Naver’s product page, the proxy still gives me errors (429 or SSL issues).
+But the retry system is working perfectly — I can see each attempt and the randomized wait time.
+
+For the next step i will be trying out some new feature such as
+- Fallback to direct connection when the proxy fails
+- User Rotation so it pretends to be from a different browsers
