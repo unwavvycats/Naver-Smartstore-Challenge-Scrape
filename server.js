@@ -13,7 +13,7 @@ app.get ('/', (req,res) => {
 
 app.get("/scrape", async (req, res) => {
   try {
-    const url = "https://quotes.toscrape.com/"; // using quotes site for test
+    const url = "https://quotes.toscrape.com/";
     const { data } = await axios.get(url);
 
     const $ = cheerio.load(data);
