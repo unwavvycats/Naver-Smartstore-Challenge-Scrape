@@ -81,3 +81,40 @@ But the retry system is working perfectly — I can see each attempt and the ran
 For the next step i will be trying out some new feature such as
 - Fallback to direct connection when the proxy fails
 - User Rotation so it pretends to be from a different browsers
+
+## Step 5 – User-Agent Rotation  
+
+Websites like Naver can block bots by checking if all requests come with the same **User-Agent** (the browser signature string).  
+To avoid looking like a bot, I added a pool of User-Agents (Chrome, Firefox, Safari, Edge).  
+
+On each request, the scraper randomly picks one:  
+
+```js
+const userAgents = [
+  "Mozilla/5.0 (Windows NT 10.0; Win64; x64)...Chrome...",
+  "Mozilla/5.0 (Macintosh; Intel Mac OS X)...Safari...",
+  "Mozilla/5.0 (X11; Ubuntu; Linux x86_64)...Firefox...",
+  "Mozilla/5.0 (Windows NT 10.0; Win64; x64)...Edge...",
+];
+
+const userAgent = userAgents[Math.floor(Math.random() * userAgents.length)];
+
+```
+Combined Strategies
+
+At this point my scraper has:
+Retry logic (up to 5 tries).
+- Randomized backoff (3–10s wait between tries).
+- User-Agent rotation (pretend to be different browsers).
+- Proxy support (using the challenge proxy, even if it fails).
+
+Current Status
+
+- On Naver’s Smartstore product page, the scraper still hits 429 Too Many Requests or SSL issues with the provided proxy.
+- However, the retry, random delays, and UA rotation are working correctly — I can see each attempt cycle with a different User-Agent.
+
+if this were on production, i would:
+ - Rotate multiple proxies instead of just one, even though i tried using free proxies scraper still wont allow it i think there is some better tools (paid) like scrape.do or else that may support the proxies rotation
+ - Add session cookies or even simulates browser behavior with puppeteer or playwright based on what i read could be effective on some cases.
+
+ 
